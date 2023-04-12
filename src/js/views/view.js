@@ -2,6 +2,15 @@ import icons from'url:../../img/icons.svg';
 
 export default class View{
     _data;
+    /**
+     * Render the received object to the DOM
+     * @param {object | object[]} data the data to be rendered (e.g recipe)
+     * @param {boolean} [render = true] if false create markup string instead of rendering to the dom 
+     * @returns {undefined | string}a markup string is returned if render = false
+     * @this {object}View  object
+     * @author Israel Akhigbe
+     * @todo Finish Implementation
+     */
     render(data, render = true){
       
         if(!data || (Array.isArray(data) && data.length === 0))
@@ -17,6 +26,7 @@ export default class View{
         
     }
 
+   
     update(data) {
       this._data = data;
       const newMarkup = this._generateMarkup();

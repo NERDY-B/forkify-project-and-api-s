@@ -1,9 +1,11 @@
 import * as model from './model.js'
+import {MODAL_CLOSE_SEC }from './config.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultView.js';
 import paginationView from './views/paginationView.js';
 import bookmarksView from './views/bookmarksView.js';
+import addRecipeView from './views/addRecipeView.js';
 
 
 // import icons from'../img/icons.svg'; //parcel 1
@@ -113,6 +115,38 @@ const controlBookmarks = function(){
   bookmarksView.render(model.state.bookmarks)
 }
 
+const controlAddRecipe = async function(newRecipe){
+  try{
+    //show the loading spinner
+    addRecipeView.renderSpinner();
+
+    //upload the new recipe data
+    await model.uploadRecipe(newRecipe);
+    console.log(model.state.recipe);
+
+    //Render recipe
+    recipeView.render(model.state.recipe);
+
+    //SUCCESS MESSAGE
+    addRecipeView.renderMessage();
+
+    //Render bookmark view
+    bookmarksView.render(model.state.bookmarks);
+
+    //change ID in url
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+    // Window.history.back();allows you to back in the page history
+    //close form window
+    setTimeout(function(){
+      addRecipeView.toggleWindow()
+    }, MODAL_CLOSE_SEC * 1000);
+  }catch(err){
+    console.error('🎇',err)
+    addRecipeView.renderError(err.message)
+  }
+
+};
+
 const init = function(){
   bookmarksView.addHandlerRender(controlBookmarks)
   recipeView.addHandlerRender(controlRecipes);
@@ -120,6 +154,7 @@ const init = function(){
   recipeView.addHandlerAddBookmark(controlAddBookmark);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
+  addRecipeView.addHandlerUpload(controlAddRecipe)
   
 };
 
